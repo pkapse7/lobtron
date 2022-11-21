@@ -16,23 +16,19 @@ class LoginController extends CI_Controller {
 
         if($username != '' && $password != ''){
             if($this->Dashboard_Model->isUserExist($username)){
-                $getpass=$this->Dashboard_Model->getPass($username);   
-                if(password_verify($password ,$getpass["password"])) {   
+                $getpass=$this->Dashboard_Model->getPass($username);
+                if(password_verify($password ,$getpass["password"])) {
                     $session_data=array(
-                        'login_id' =>$getpass["employeeID"],
-                        'name' =>$getpass["employee_name"],
+                        'login_id' =>$getpass["companyID"],
+                        'name' =>$getpass["company_name"],
                         'username' =>$username,
-                        'type' =>$getpass["employee_type"],
+                        'type' =>$getpass["login_type"],
                         'loginAdmin' =>TRUE //boolean value TRUE
                     );
-                $this->session->set_userdata($session_data);
-                if($session_data['type']==0){
-                    redirect('employees');
+                    $this->session->set_userdata($session_data);
+                    redirect('');
+
                 }else{
-                    redirect('employees-profile');
-                }
-                
-                }else{		
                     $this->session->set_flashdata('error_msg','Password does not match.');
                     redirect('');
                 }
@@ -55,5 +51,5 @@ class LoginController extends CI_Controller {
         $this->session->sess_destroy();
         redirect('');
     }
-	
+
 }

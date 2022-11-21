@@ -9,8 +9,8 @@ class Dashboard_Model extends CI_Model {
 
     public function isUserExist($username){
         try{
-            $this->db->select('employeeID');
-            $this->db->from('employee');
+            $this->db->select('companyID');
+            $this->db->from('company');
             $this->db->where('email',$username);
 
             $query=$this->db->get();
@@ -27,9 +27,9 @@ class Dashboard_Model extends CI_Model {
     }
 
     public function getPass($username){
-     	try{     
-            $this->db->select('employeeID, employee_name, email, employee_type, password');
-            $this->db->from('employee');
+     	try{
+            $this->db->select('companyID, company_name, email, login_type, password');
+            $this->db->from('company');
             $this->db->where('email',$username);
 
             $query=$this->db->get();
@@ -45,15 +45,6 @@ class Dashboard_Model extends CI_Model {
      	}
     }
 
-    public function get_no_of_employees() {
-        try{
-            $query =$this->db->get('employee');
-            return $query->num_rows();
-        }catch(Exception $ex){
-            error_log($ex->getTraceAsString());
-            echo $ex->getTraceAsString();
-            return FALSE;
-        }
-    }
     
+
 }

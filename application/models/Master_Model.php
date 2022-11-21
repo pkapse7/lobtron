@@ -5,84 +5,6 @@ class Master_Model extends CI_Model{
     function __construct(){
         parent::__construct();
     }
-    
-    public function get_employee_by_id($empId=''){
-        try{
-            $this->db->select('employee.employeeID,employee.employee_name,employee.salary,employee.designation,employee.employee_type,employee.email,employee.departmentID,department.department_name');
-            $this->db->from('employee');
-            $this->db->join('department','department.departmentID=employee.departmentID','LEFT');
-            if($this->session->userdata('type')==1){
-                $this->db->where('employee.employeeID',$this->session->userdata('login_id'));
-            }else{
-                $this->db->where('employee.employeeID',$empId);
-            }
-            
-            $query = $this->db->get();
-
-            $array = array();
-            if($this->db->affected_rows() > 0) {
-                $array = $query->row();
-            } 
-            return $array;
-        }catch(Exception $ex) {
-            error_log($ex->getTraceAsString());
-            echo $ex->getTraceAsString();
-            return FALSE;
-        }
-    }
-    
-    
-    public function get_all_employees() {
-        try{
-            $this->db->select('employee.employeeID,employee.employee_name,employee.salary,employee.designation,employee.employee_type,employee.email,department.department_name');
-            $this->db->from('employee');
-            $this->db->join('department','department.departmentID=employee.departmentID','LEFT');
-            $this->db->where('employee.employee_type', 1);
-            $query =$this->db->get();
-            return $query->result_array();
-        }catch(Exception $ex){
-            error_log($ex->getTraceAsString());
-            echo $ex->getTraceAsString();
-            return FALSE;
-        }
-    }
-
-    public function get_all_department() {
-        try{
-            $query =$this->db->get('department');
-            return $query->result_array();
-        }catch(Exception $ex){
-            error_log($ex->getTraceAsString());
-            echo $ex->getTraceAsString();
-            return FALSE;
-        }
-    }
-
-    public function insertEmployee(){
-        try{
-            $data = array(
-                'employee_name' => $this->input->post('employee_name'),
-                'designation' => $this->input->post('designation'),
-                'departmentID' => $this->input->post('departmentID'),
-                'employee_type' => $this->input->post('employee_type'),
-                'salary' => $this->input->post('salary'),
-                'email' => $this->input->post('email'),
-                'password' => password_hash($this->input->post('password'),PASSWORD_BCRYPT),
-            );
-            $data = $this->security->xss_clean($data);
-            $this->db->insert('employee', $data);
-            if($this->db->affected_rows() > 0){
-                return true;
-            }else{
-                return false;
-            }
-        }catch(Exception $ex){
-            error_log($ex->getTraceAsString());
-            echo $ex->getTraceAsString();
-            return FALSE;
-        }
-       
-    }
 
     public function isEmailExist($email){
         try{
@@ -103,12 +25,29 @@ class Master_Model extends CI_Model{
             return FALSE;
         }
     }
-    
-    public function deleteEmployee(){
+
+    //company
+    public function insertCompany($data){
         try{
-            $id = base64_decode($_POST['employeeID']);
-            $this->db->where('employeeID', $id);
-            return $this->db->delete('employee');
+            $this->db->insert('company', $data);
+            if($this->db->affected_rows() > 0){
+                return true;
+            }else{
+                return false;
+            }
+        }catch(Exception $ex){
+            error_log($ex->getTraceAsString());
+            echo $ex->getTraceAsString();
+            return FALSE;
+        }
+
+    }
+
+    public function get_all_companies() {
+        try{
+            $this->db->where('login_type',1);
+            $query =$this->db->get('company');
+            return $query->result_array();
         }catch(Exception $ex){
             error_log($ex->getTraceAsString());
             echo $ex->getTraceAsString();
@@ -116,29 +55,154 @@ class Master_Model extends CI_Model{
         }
     }
 
-    public function updateEmployee() {
+    public function get_company_by_id($comId) {
+        try{
+            $this->db->select('company_name,phone,website,address,email,photo,status');
+            $this->db->from('company');
+            $this->db->where('companyID',$comId);
+            $query =$this->db->get();
+            $array = array();
+            if($this->db->affected_rows() > 0) {
+                $array = $query->row();
+            }
+            return $array;
+        }catch(Exception $ex){
+            error_log($ex->getTraceAsString());
+            echo $ex->getTraceAsString();
+            return FALSE;
+        }
+    }
+
+    public function updateCompany($id,$data) {
         try {
-            $data = array(
-                'employee_name' => $this->input->post('employee_name'),
-                'designation' => $this->input->post('designation'),
-                'departmentID' => $this->input->post('departmentID'),
-                'employee_type' => $this->input->post('employee_type'),
-                'salary' => $this->input->post('salary'),
-                'email' => $this->input->post('email'),
-            );
-            $data = $this->security->xss_clean($data);
-            $this->db->where('employeeID', base64_decode($this->input->post('employeeID')));
-            if($this->db->update('employee',$data)){
+            $this->db->where('companyID', base64_decode($id));
+            if($this->db->update('company',$data)){
                 return TRUE;
             }else{
                 return FALSE;
-            }   
-            
+            }
+
         } catch (Exception $exc) {
             error_log($ex->getTraceAsString());
             echo $ex->getTraceAsString();
             return FALSE;
         }
     }
-    
-}    
+
+    public function deleteCompany(){
+        try{
+            $id = base64_decode($_POST['companyID']);
+            $this->db->where('companyID', $id);
+            return $this->db->delete('company');
+        }catch(Exception $ex){
+            error_log($ex->getTraceAsString());
+            echo $ex->getTraceAsString();
+            return FALSE;
+      }
+   }
+
+   //contatcs
+   public function insertContact($data){
+       try{
+           $this->db->insert('contacts', $data);
+           if($this->db->affected_rows() > 0){
+               return true;
+           }else{
+               return false;
+           }
+       }catch(Exception $ex){
+           error_log($ex->getTraceAsString());
+           echo $ex->getTraceAsString();
+           return FALSE;
+       }
+
+   }
+
+   public function get_all_contacts() {
+       try{
+           $this->db->select('contacts.contactID,contacts.first_name,contacts.last_name,contacts.phone,contacts.address, contacts.photo,contacts.email,contacts.status,company.company_name');
+           $this->db->from('contacts');
+           $this->db->join('company','company.companyID=contacts.company_id','LEFT');
+           if($this->session->userdata('type') == 1){
+             $this->db->where('company.companyID',$this->session->userdata('login_id'));
+           }
+           $query =$this->db->get();
+           return $query->result_array();
+       }catch(Exception $ex){
+           error_log($ex->getTraceAsString());
+           echo $ex->getTraceAsString();
+           return FALSE;
+       }
+   }
+
+   public function get_contact_by_id($conId) {
+       try{
+           $this->db->select('first_name,phone,last_name,address,email,photo,status');
+           $this->db->from('contacts');
+           $this->db->where('contactID',$conId);
+           $query =$this->db->get();
+           $array = array();
+           if($this->db->affected_rows() > 0) {
+               $array = $query->row();
+           }
+           return $array;
+       }catch(Exception $ex){
+           error_log($ex->getTraceAsString());
+           echo $ex->getTraceAsString();
+           return FALSE;
+       }
+   }
+
+   public function updateContact($id,$data) {
+       try {
+           $this->db->where('contactID', base64_decode($id));
+           if($this->db->update('contacts',$data)){
+               return TRUE;
+           }else{
+               return FALSE;
+           }
+
+       } catch (Exception $exc) {
+           error_log($ex->getTraceAsString());
+           echo $ex->getTraceAsString();
+           return FALSE;
+       }
+   }
+
+   public function deleteContact(){
+       try{
+           $id = base64_decode($_POST['contactID']);
+           $this->db->where('contactID', $id);
+           return $this->db->delete('contacts');
+       }catch(Exception $ex){
+           error_log($ex->getTraceAsString());
+           echo $ex->getTraceAsString();
+           return FALSE;
+     }
+  }
+
+  public function getCompanyData(){
+      try{
+          $this->db->select('companyID,company_name,phone,website,address,email,photo,status');
+          $this->db->from('company');
+          $this->db->where('companyID',$this->session->userdata('login_id'));
+          // if($this->session->userdata('type')==1){
+          //     $this->db->where('employee.employeeID',$this->session->userdata('login_id'));
+          // }else{
+          //     $this->db->where('employee.employeeID',$empId);
+          // }
+
+          $query = $this->db->get();
+
+          $array = array();
+          if($this->db->affected_rows() > 0) {
+              $array = $query->row();
+          }
+          return $array;
+      }catch(Exception $ex) {
+          error_log($ex->getTraceAsString());
+          echo $ex->getTraceAsString();
+          return FALSE;
+      }
+  }
+}

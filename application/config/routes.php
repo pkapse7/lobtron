@@ -51,6 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $route['dashboard'] = 'DashboardController/index';
 $route['default_controller'] = $route['dashboard'];
+// $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
@@ -90,12 +91,22 @@ $route['add-left-advertise']="AdvertiseController/addLeftAdvertise";
 $route['edit-left-advertise']="AdvertiseController/updateLeftAdvertise";
 $route['delete-left-advertise']="AdvertiseController/deleteLeftAdvertise";
 
-$route['main-advertise']="AdvertiseController/mainAdvertise";
-$route['show-main-advertise']="AdvertiseController/showMainAdvertise";
-$route['add-main-advertise']="AdvertiseController/addMainAdvertise";
-$route['edit-main-advertise']="AdvertiseController/updateMainAdvertise";
-$route['delete-main-advertise']="AdvertiseController/deleteMainAdvertise";
+$route['company']="AdminController/list";
+$route['show-company']="AdminController/showCompany";
+$route['add-company']="AdminController/addCompany";
+$route['edit-company']="AdminController/updateCompany";
+$route['delete-company']="AdminController/deleteCompany";
+$route['contactList']="AdminController/contactList";
 
+
+
+$route['contact']="CompanyController/list";
+$route['show-contact']="CompanyController/showContacts";
+$route['add-contact']="CompanyController/addContact";
+$route['edit-contact']="CompanyController/updateContact";
+$route['delete-contact']="CompanyController/deleteContact";
+$route['own-profile']="CompanyController/companyProfile";
+$route['edit-company-profile']="CompanyController/updateCompanyProfile";
 //user
 $route['employees-profile']="EmployeeController/employeeProfile";
 $route['employees']="EmployeeController/employees";
